@@ -1,0 +1,19 @@
+{
+  "name": "sih",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "baseline-browser-mapping": "^2.8.32"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.1002.0",
+    "@redis/client": "^5.10.0",
+    "jest-mock-extended": "2.0.4"
+  }
+}

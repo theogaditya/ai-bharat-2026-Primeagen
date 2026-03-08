@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: self-deployment
+  namespace: default
+  labels:
+    app: self
+  annotations:
+    # Force redeployment by updating this timestamp when pushing changes
+    kubernetes.io/change-cause: "Initial deployment"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: self
+  template:
+    metadata:
+      labels:
+        app: self
+      annotations:
+        # This annotation can be updated to force pod recreation
+        rollme: "initial"
+    spec:
+      containers:
+        - name: self
+          image: ogadityahota/swarajdesk-self:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3030
+              name: http
+          envFrom:
+            - secretRef:
+                name: sih-swaraj-self-secret  # from ExternalSecret
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3030"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3030
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3030
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: self-service
+  namespace: default
+  labels:
+    app: self
+spec:
+  selector:
+    app: self
+  ports:
+    - name: http
+      port: 3030
+      targetPort: 3030
+      protocol: TCP
+  type: ClusterIP

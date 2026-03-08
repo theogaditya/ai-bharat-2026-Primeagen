@@ -1,0 +1,16 @@
+argo-cd:
+  fullnameOverride: argocd
+  namespaceOverride: argocd
+  server:
+    insecure: true
+    extraArgs:
+      - --insecure
+    service:
+      type: LoadBalancer
+
+traefik:
+  namespaceOverride: default
+  providers:
+    kubernetesIngress:
+      publishedService:
+        enabled: true
