@@ -404,14 +404,14 @@ A core requirement for government adoption is maximizing ROI while keeping both 
 
 ### 6.1 · AWS Infrastructure Cost — Monthly Run Rate
 
-| Component | AWS Service / Instance | Deployment Details | Purpose | Est. Monthly Cost |
-|---|---|---|---|:---:|
-| Application Compute Layer | EC2 t3.medium (2 vCPU, 8GB RAM) | Runs NGINX reverse proxy and core backend services: user-be, admin-be, compQueue, and self (custom GPT service) on Bun runtime | Handles API requests, complaint ingestion, authentication, and complaint processing orchestration | ~$60.00 |
-| AI Compute Node 1 | EC2 t3.large (4 vCPU, 16GB RAM) | Hosts Vision Model and Abuse Detection Model using Python FastAPI services | Performs image validation, spam filtering, and abuse detection for complaint submissions | ~$60.00 |
-| AI Compute Node 2 | EC2 t3.medium (2 vCPU, 8GB RAM) | Hosts Voice Assistant pipeline and Complaint Categorization Model | Handles speech-to-text processing and NLP-based complaint categorization | ~$60.00 |
-| Queue / Cache Layer | Redis | Redis instance managing complaint queues, worker pipelines, caching, and session state | Backbone of asynchronous complaint processing and system buffering | ~$10.00 |
-| Object Storage | AWS S3 Standard (~50 GB) | Stores complaint images, audio recordings, and attachments | Scalable storage for unstructured media assets | ~$2.00 |
-| | | | **Total Estimated AWS Infrastructure Cost** | **~$192.50 / month** |
+| Component | AWS Service / Instance | Deployment Details | Purpose | Daily VM Cost | Daily Storage Cost | Est. Monthly Cost |
+|---|---|---|---|:---:|:---:|:---:|
+| VM-1 | EC2 T3.Medium (2 vCPU, 8GB RAM) | Hosts Augmented-LLM Abuse Detection Model via Python FastAPI | Spam filtering, abuse detection, and complaint submission validation | $1.00 | $0.02 | ~$30.60 |
+| VM-2 | EC2 T3.Medium (2 vCPU, 20GB RAM) | Hosts VLM–ViT Image Detection & Verification Model | Image validation, visual complaint verification, and media authenticity checks | $1.60 | $0.05 | ~$49.50 |
+| VM-3 | EC2 T2.Large (2 vCPU, 50GB RAM) | Hosts RAG-Based Conversational Model | Voice assistant pipeline, speech-to-text, and NLP-based complaint categorization | $4.51 | $0.13 | ~$139.20 |
+| VM-4 | EC2 T2.Large (2 vCPU, 10GB RAM) | Consolidated backend VPS running NGINX reverse proxy, user-be, admin-be, compQueue, and self services on Bun runtime | API requests, complaint ingestion, authentication, and processing orchestration | $2.38 | $0.03 | ~$72.30 |
+
+| | | | **Total Estimated AWS Infrastructure Cost** | **$9.49/day** | **$0.20/day** | **~$291.60 / month** |
 
 <br/>
 
@@ -421,10 +421,9 @@ The system has been architected to require near-zero manual DevOps intervention.
 
 - **Labor & Maintenance:** Managed internally by the core engineering team. No dedicated DevOps engineers are required for the pilot phase. Deployment is fully automated via basic CI/CD GitHub Actions and simple Ansible scripts.
 - **Monitoring:** Utilizing the free tiers of AWS CloudWatch and open-source Prometheus/Grafana.
-- **Total Ops Cost: ~$15.00 / month** (allocated strictly for domain renewals, DNS routing, and minor unforeseen third-party API overages).
+- **Total Ops Cost: ~$15.20 / month** (allocated strictly for domain renewals, DNS routing, and minor unforeseen third-party API overages).
 
-> 💡 The total monthly expenditure to run the entire pilot infrastructure is under **$210**, making it an incredibly lightweight and highly scalable financial model.
-
+> 💡 The total monthly expenditure to run the entire pilot infrastructure is under **$307**, making it an incredibly lightweight and highly scalable financial model.
 <br/>
 
 ---
