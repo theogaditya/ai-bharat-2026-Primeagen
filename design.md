@@ -41,27 +41,27 @@ The platform follows a two-instance EC2 deployment architecture:
 │  │  toxic-ani.adityahota.online   ──▶ EC2 #1 (Vision + Abuse)  │    │
 │  │  voice-ani.adityahota.online   ──▶ EC2 #2 (Voice)           │    │
 │  └──────┬──────────────────────────────────────┬───────────────┘    │
-│         │                                      │                   │
-│         ▼                                      ▼                   │
-│  ┌──────────────────────────┐   ┌──────────────────────────────┐   │
-│  │  EC2 #1 — t2.medium      │   │  EC2 #2 — t2.large           │   │
-│  │  (25 GB, ap-south-1)     │   │  (50 GB, ap-south-1)         │   │
-│  │                          │   │                              │   │
-│  │  ┌────────────────────┐  │   │  ┌────────────────────────┐  │   │
-│  │  │ Nginx (port 80/443)│  │   │  │ Nginx (port 80/443)    │  │   │
-│  │  │ name-based routing │  │   │  └──────────┬─────────────┘  │   │
-│  │  └──────┬─────────────┘  │   │             │               │   │
-│  │         │                │   │             ▼               │   │
-│  │    ┌────┴────┐           │   │  ┌────────────────────────┐  │   │
-│  │    │         │           │   │  │ voice-service          │  │   │
-│  │    ▼         ▼           │   │  │ (uvicorn :8001)        │  │   │
-│  │  ┌──────┐ ┌───────┐      │   │  │ systemd managed        │  │   │
-│  │  │vision│ │abuse  │      │   │  └────────────────────────┘  │   │
-│  │  │:8002 │ │:8000  │      │   │                              │   │
-│  │  │svc   │ │svc    │      │   └──────────────────────────────┘   │
-│  │  └──────┘ └───────┘      │                                      │
-│  │  systemd managed         │                                      │
-│  └──────────────────────────┘                                      │
+│         │                                      │                    │
+│         ▼                                      ▼                    │
+│  ┌──────────────────────────┐   ┌──────────────────────────────┐    │
+│  │  EC2 #1 — t2.medium      │   │  EC2 #2 — t2.large           │    │
+│  │  (25 GB, ap-south-1)     │   │  (50 GB, ap-south-1)         │    │
+│  │                          │   │                              │    │
+│  │  ┌────────────────────┐  │   │  ┌────────────────────────┐  │    │
+│  │  │ Nginx (port 80/443)│  │   │  │ Nginx (port 80/443)    │  │    │
+│  │  │ name-based routing │  │   │  └──────────┬─────────────┘  │    │
+│  │  └──────┬─────────────┘  │   │             │                │    │
+│  │         │                │   │             ▼                │    │
+│  │    ┌────┴────┐           │   │  ┌────────────────────────┐  │    │
+│  │    │         │           │   │  │ voice-service          │  │    │
+│  │    ▼         ▼           │   │  │ (uvicorn :8001)        │  │    │
+│  │  ┌──────┐ ┌───────┐      │   │  │ systemd managed        │  │    │
+│  │  │vision│ │abuse  │      │   │  └────────────────────────┘  │    │
+│  │  │:8002 │ │:8000  │      │   │                              │    │
+│  │  │svc   │ │svc    │      │   └──────────────────────────────┘    │
+│  │  └──────┘ └───────┘      │                                       │
+│  │  systemd managed         │                                       │
+│  └──────────────────────────┘                                       │
 │                                                                     │
 │  ┌─────────────────────────────────────────────────────────────┐    │
 │  │ Data & Queue Layer                                          │    │
@@ -82,39 +82,39 @@ The platform follows a two-instance EC2 deployment architecture:
 
 
 ```
-┌───────────────────────────────────────────────────────────── ┐
-│                    Vision Model Pipeline                     │
-├───────────────────────────────────────────────────────────── ┤
-│                                                              │
-│  Input: Image (Upload or CDN URL)                            │
-│         │                                                    │
-│         ▼                                                    │
-│  ┌──────────────────┐                                        │
-│  │ Image Processor  │                                        │
-│  │ - Normalize      │                                        │
-│  │ - Resize         │                                        │
-│  │ - Transform      │                                        │
-│  └────────┬─────────┘                                        │
-│           │                                                  │
-│           ├─────────────────┬────────────────┐               │
-│           ▼                 ▼                ▼               │
-│  ┌────────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│  │  VLM Primary   │  │ViT Guard    │  │ViT Guard    │        │
-│  │                │  │(Infra)      │  │(Education)  │        │
-│  │ 20 Sectors     │  │Specialized  │  │Specialized  │        │
-│  └────────┬───────┘  └──────┬──────┘  └──────┬──────┘        │
-│           │                 │                │               │
-│           └─────────────────┼────────────────┘               │
-│                             ▼                                │
-│                    ┌─────────────────┐                       │
-│                    │ Decision Engine │                       │
-│                    │ - Compare scores│                       │
-│                    │ - Apply rules   │                       │
-│                    │ - Select source │                       │
-│                    └────────┬────────┘                       │
-│                             ▼                                │
-│  Output: {sector, category, is_valid, confidence, source}    │
-│                                                              │
+┌─────────────────────────────────────────────────────────────┐
+│                    Vision Model Pipeline                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Input: Image (Upload or CDN URL)                           │
+│         │                                                   │
+│         ▼                                                   │
+│  ┌──────────────────┐                                       │
+│  │ Image Processor  │                                       │
+│  │ - Normalize      │                                       │
+│  │ - Resize         │                                       │
+│  │ - Transform      │                                       │
+│  └────────┬─────────┘                                       │
+│           │                                                 │
+│           ├─────────────────┬────────────────┐              │
+│           ▼                 ▼                ▼              │
+│  ┌────────────────┐  ┌─────────────┐  ┌─────────────┐       │
+│  │  VLM Primary   │  │ViT Guard    │  │ViT Guard    │       │
+│  │                │  │(Infra)      │  │(Education)  │       │
+│  │ 20 Sectors     │  │Specialized  │  │Specialized  │       │
+│  └────────┬───────┘  └──────┬──────┘  └──────┬──────┘       │
+│           │                 │                │              │
+│           └─────────────────┼────────────────┘              │
+│                             ▼                               │
+│                    ┌─────────────────┐                      │
+│                    │ Decision Engine │                      │
+│                    │ - Compare scores│                      │
+│                    │ - Apply rules   │                      │
+│                    │ - Select source │                      │
+│                    └────────┬────────┘                      │
+│                             ▼                               │
+│  Output: {sector, category, is_valid, confidence, source}   │
+│                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -157,18 +157,18 @@ The platform follows a two-instance EC2 deployment architecture:
 #### 2.2.1 Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────┐
 │                 Abuse Detection Pipeline                     │
-├─────────────────────────────────────────────────────────────┤
+├──────────────────────────────────────────────────────────────┤
 │                                                              │
-│  Input: User complaint text                                 │
+│  Input: User complaint text                                  │
 │         │                                                    │
-│         ▼
+│         ▼                                                    │
 │  │ Toxicity Scorer  │                                        │
 │  │ Threshold: 0.7   │                                        │
 │  └────────┬─────────┘                                        │
 │           │                                                  │
-│           ├─────────No Abuse──────▶ Return original text    │
+│           ├─────────No Abuse──────▶ Return original text     │
 │           │                                                  │
 │           ▼ Abuse Detected                                   │
 │  ┌──────────────────┐                                        │
@@ -186,9 +186,9 @@ The platform follows a two-instance EC2 deployment architecture:
 │  └────────┬─────────┘                                        │
 │           │                                                  │
 │           ▼                                                  │
-│  Output: {has_abuse, original_text, clean_text, spans}      │
+│  Output: {has_abuse, original_text, clean_text, spans}       │
 │                                                              │
-└─────────────────────────────────────────────────────────────┘
+└──────────────────────────────────────────────────────────────┘
 ```
 
 #### 2.2.2 Component Details
@@ -240,11 +240,11 @@ The platform follows a two-instance EC2 deployment architecture:
 
 
 ```
-┌─────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────┐
 │              Voice Chat Assistant Pipeline                   │
-├─────────────────────────────────────────────────────────────┤
+├──────────────────────────────────────────────────────────────┤
 │                                                              │
-│  Input: Audio file (mp3, wav, m4a, webm, ogg)               │
+│  Input: Audio file (mp3, wav, m4a, webm, ogg)                │
 │         │                                                    │
 │         ▼                                                    │
 │  ┌──────────────────┐                                        │
@@ -287,7 +287,7 @@ The platform follows a two-instance EC2 deployment architecture:
 │  │ - Escalation     │                                        │
 │  └────────┬─────────┘                                        │
 │           │                                                  │
-│           ├─────Out of Domain──▶ Escalate to support        │
+│           ├─────Out of Domain──▶ Escalate to support         │
 │           │                                                  │
 │           ▼ In Domain                                        │
 │  ┌──────────────────┐                                        │
@@ -307,9 +307,9 @@ The platform follows a two-instance EC2 deployment architecture:
 │  └────────┬─────────┘                                        │
 │           │                                                  │
 │           ▼                                                  │
-│  Output: Audio file (mp3) + Text response                   │
+│  Output: Audio file (mp3) + Text response                    │
 │                                                              │
-└─────────────────────────────────────────────────────────────┘
+└──────────────────────────────────────────────────────────────┘
 ```
 
 
@@ -540,8 +540,8 @@ Response:
 │  │  │                                                     │     │   │
 │  │  │  ┌──────────────────────────────────────────────┐   │     │   │
 │  │  │  │ Nginx (name-based virtual hosting)           │   │     │   │
-│  │  │  │  vision-ani.adityahota.online  → :8002        │   │     │   │
-│  │  │  │  toxic-ani.adityahota.online   → :8000        │   │     │   │
+│  │  │  │  vision-ani.adityahota.online  → :8002       │   │     │   │
+│  │  │  │  toxic-ani.adityahota.online   → :8000       │   │     │   │
 │  │  │  └──────────────────┬───────────────────────────┘   │     │   │
 │  │  │          ┌──────────┴──────────┐                    │     │   │
 │  │  │          ▼                     ▼                    │     │   │
@@ -561,7 +561,7 @@ Response:
 │  │  │                                                     │     │   │
 │  │  │  ┌──────────────────────────────────────────────┐   │     │   │
 │  │  │  │ Nginx                                        │   │     │   │
-│  │  │  │  voice-ani.adityahota.online  → :8001         │   │     │   │
+│  │  │  │  voice-ani.adityahota.online  → :8001        │   │     │   │
 │  │  │  └──────────────────┬───────────────────────────┘   │     │   │
 │  │  │                     ▼                               │     │   │
 │  │  │  ┌──────────────────────────────┐                   │     │   │
@@ -574,13 +574,10 @@ Response:
 │  └──────────────────────────────────────────────────────────────┘   │
 │                                                                     │
 │  Deployment Pipeline:                                               │
-│  Ansible → (1) Generate SSH key → (2) Terraform apply →            │
-│  (3) SSH provision → (4) Clone repo → (5) Install deps →           │
-│  (6) Deploy systemd services → (7) Configure Nginx →               │
+│  Ansible → (1) Generate SSH key → (2) Terraform apply →             │
+│  (3) SSH provision → (4) Clone repo → (5) Install deps →            │
+│  (6) Deploy systemd services → (7) Configure Nginx →                │
 │  (8) Update Cloudflare DNS                                          │
-│                                                                     │
-│  Source Repository:                                                 │
-│  - github.com/Aniroodh1234/SIH_models_monorepo (branch: main)      │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
