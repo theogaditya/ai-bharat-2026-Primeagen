@@ -163,7 +163,7 @@ The platform follows a two-instance EC2 deployment architecture:
 │                                                              │
 │  Input: User complaint text                                  │
 │         │                                                    │
-│         ▼                                                    │
+│         ▼                                                    |
 │  │ Toxicity Scorer  │                                        │
 │  │ Threshold: 0.7   │                                        │
 │  └────────┬─────────┘                                        │
@@ -523,7 +523,7 @@ Response:
 │                                                                     │
 │  Infrastructure as Code (Terraform + Ansible)                       │
 │  - Region: ap-south-1 (Mumbai)                                      │
-│  - 2 EC2 instances (Ubuntu 22.04, gp2 EBS)                          │
+│  - 3 EC2 instances total (AI models × 2, Backend services × 1)      │
 │  - Single Security Group (SSH :22, HTTP :80, HTTPS :443, :8000–8002)│
 │  - SSH Key Pair auto-generated and registered via Terraform         │
 │  - Ansible provisions, deploys, and manages all services            │
@@ -579,6 +579,9 @@ Response:
 │  (6) Deploy systemd services → (7) Configure Nginx →                │
 │  (8) Update Cloudflare DNS                                          │
 │                                                                     │
+│  Source Repository:                                                 │
+│  - github.com/Aniroodh1234/SIH_models_monorepo (branch: main)       │
+│                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -609,6 +612,62 @@ Response:
 - API keys: HuggingFace, LangChain, Groq
 
 
+
+### 4.3 Backend Services EC2 — Docker Deployment
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              BACKEND SERVICES INFRASTRUCTURE (EC2 #3)               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  EC2 #3 — Swaraj-EC2-Instance                                       │
+│  Instance type : m7i-flex.large                                     │
+│  Storage       : 30 GB gp3                                          │
+│  AMI           : Ubuntu 22.04 (Canonical)                           │
+│  Region        : ap-south-1                                         │
+│  Security Group: swaraj-web-sg (SSH :22, HTTP :80, all egress)      │
+│  Key Pair      : ec2-iit-pair                                       │
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐    │
+│  │                   Nginx Reverse Proxy                       │    │
+│  │               (site: /etc/nginx/sites-available/swaraj)     │    │
+│  └──────┬─────────────┬─────────────┬──────────────┬───────────┘    │
+│         │             │             │              │                │
+│         ▼             ▼             ▼              ▼                │
+│  ┌────────────┐ ┌──────────┐ ┌──────────┐ ┌────────────────────┐    │
+│  │  admin-be  │ │comp-queue│ │  self    │ │     user-be        │    │
+│  │ Docker     │ │ Docker   │ │ Docker   │ │  Docker Compose    │    │
+│  │ :3002      │ │ :3005    │ │ :3030    │ │  :3000 (HTTP)      │    │
+│  │            │ │          │ │          │ │  :3001 (WebSocket) │    │
+│  └────────────┘ └──────────┘ └──────────┘ └────────────────────┘    │
+│  restart_policy: always on all containers                           │
+│                                                                     │
+│  Secrets (AWS Secrets Manager → env files per container):           │
+│  - admin.env   ← secrets_map.admin_be                               │
+│  - comp.env    ← secrets_map.comp_queue                             │
+│  - user.env    ← secrets_map.user_be                                │
+│  - self.env    ← secrets_map.self  (full secret passthrough)        │
+│                                                                     │
+│  Deployment Pipeline:                                               │
+│  Ansible → (1) Terraform apply → (2) SSH wait →                     │
+│  (3) Install Docker + Nginx → (4) Pull Docker images →              │
+│  (5) Fetch secrets from AWS Secrets Manager → (6) Write .env →      │
+│  (7) Run containers → (8) Configure Nginx →                         │
+│  (9) Update Cloudflare DNS (5 A records)                            │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**EC2 #3 — Backend Services Container Details**
+
+| Container | Port(s) | Managed by | Env Source |
+|-----------|---------|------------|------------|
+| admin-be | 3002 | docker run | admin.env (Secrets Manager) |
+| comp-queue | 3005 | docker run | comp.env (Secrets Manager) |
+| user-be | 3000, 3001 (WS) | Docker Compose | user.env (Secrets Manager) |
+| self | 3030 | docker run | self.env (Secrets Manager) |
+
+All containers run with `restart_policy: always`. Secrets are pulled at deploy-time from AWS Secrets Manager using the AWS CLI (awscli + jq) and written as `.env` files on the instance. The `user-be` service is the only one deployed via Docker Compose (to support its multi-container or WebSocket configuration); the remaining three are run directly via `docker run`.
 
 ## 5. Security Considerations
 
