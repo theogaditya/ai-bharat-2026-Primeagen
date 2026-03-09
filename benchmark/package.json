@@ -1,0 +1,21 @@
+{
+  "name": "bench",
+  "version": "1.0.0",
+  "description": "Backend benchmarking suite for SwarajDesk",
+  "scripts": {
+    "health": "bun run 01-health.bench.ts",
+    "ingestion": "bun run 02-ingestion.bench.ts",
+    "drain": "bun run 03-queue-drain.ts",
+    "seed": "bun run seed-queue.ts",
+    "report": "bun run generate-report.ts",
+    "all": "bash run-all.sh"
+  },
+  "dependencies": {
+    "autocannon": "^7.15.0",
+    "p-limit": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/autocannon": "^7.9.4",
+    "typescript": "^5.0.0"
+  }
+}
