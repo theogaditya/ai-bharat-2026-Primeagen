@@ -363,12 +363,11 @@ To ensure absolute reliability, especially in rural areas with poor connectivity
 
 <br/>
 
-| Failure Scenario | Timeout Threshold | Fallback Behaviour |
-|---|:---:|---|
-| Network Offline | - | Complaint staged locally; auto-synced on reconnect |
-| Voice API Timeout | 4.5 s | WebSocket closed; interface falls back to text chat |
-| Vision Model Timeout | 5 s | Complaint accepted with `AI_VISION_BYPASSED: TRUE`; routed to manual triage |
-| Database Connection Loss | - | Redis holds queue in memory; backlog flushed on recovery |
+| Failure Scenario         | Timeout Threshold | Fallback Behaviour                                              |
+| ------------------------ | :---------------: | --------------------------------------------------------------- |
+| Network Offline          |         –         | Complaint staged locally; auto-synced when connectivity returns |
+| AI Processing Failure    |        5 s        | Complaint returned to Redis retry queue and reprocessed         |
+| Database Connection Loss |         –         | Redis temporarily stores backlog until DB reconnects            |
 
 <br/>
 
@@ -377,10 +376,10 @@ To ensure absolute reliability, especially in rural areas with poor connectivity
 - **Failure State:** A user in a remote district loses internet connectivity midway through filing a grievance.
 - **Fallback:** The Next.js application utilizes local caching (DynamoDB/AsyncStorage). The complaint is securely saved on the device, and the UI displays an "Offline - Queued for Sync" indicator. A background worker continuously monitors the device's network state. The moment a stable 3G/4G/WiFi connection is restored, the app automatically flushes the payload to the backend without requiring the user to reopen the application.
 
-### 5.3 · AI Processing Retry Queue (Self-Healing Pipeline)
+### 5.2 · AI Processing Retry Queue (Self-Healing Pipeline)
 
 - **Failure State:** During complaint ingestion, AI services such as image validation, categorization, or abuse detection fail to respond within the allowed timeout window.
-  
+
   This can occur due to:
   - Temporary AI instance overload
   - Model service restarts
@@ -389,7 +388,7 @@ To ensure absolute reliability, especially in rural areas with poor connectivity
 
 - **Fallback (Queue Reprocessing):** Instead of rejecting the complaint or bypassing validation, SwarajDesk employs a self-healing retry mechanism within the Redis queue pipeline.
 
-### 5.4 · Database & Queue Failover
+### 5.3 · Database & Queue Failover
 
 - **Failure State:** The managed PostgreSQL database experiences a brief connection blip or restart.
 - **Fallback:** Because all incoming user traffic routes through Redis before hitting the database, the system is immune to direct database crashes. If Postgres goes offline, the worker processes pause, and Redis safely holds thousands of incoming complaints in its memory. Once the DB connection is restored, the backlog is flushed into PostgreSQL at a safe rate, ensuring zero data loss.
@@ -535,16 +534,6 @@ SwarajDesk is a **utility app, not a social app.** A user opens it to file (Day 
 | Infrastructure | ₹4,73,568 |
 | Operations | ₹13,20,000 |
 | **Total Cost** | **₹17,93,568** |
-
-Sponsorships sold as **"Digital Village Impact Packages"** to Tata Steel, MCL, Adani Foundation:
-
-| Package | Price | Includes |
-|---|---|---|
-| Silver | ₹3,00,000 | App branding + monthly impact report (1 district) |
-| Gold | ₹7,00,000 | "Adopt 3 Districts" + CSC branding + quarterly PR event |
-| Platinum | ₹12,00,000 | Exclusive state-wide branding + full CSR integration |
-
-*Target: 1 Gold + 3 Silver = **₹16,00,000 revenue** · Net: –₹1,93,568 (standard for scaling stage)*
 
 ---
 
