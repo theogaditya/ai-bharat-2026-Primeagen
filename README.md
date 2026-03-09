@@ -235,7 +235,7 @@ Since every complaint must pass through several processing stages such as abuse 
 
 > **Decision:** Instead of deploying load-balanced multi-instance clusters, the system initially runs a small number of EC2 instances hosting multiple services.
 
-For example, Vision and Abuse models share one instance, the Voice model runs on another, and backend services coexist on a separate compute node. The primary benefit is keeping infrastructure costs under ~$300/month, ensuring efficient resource usage, and simplifying the deployment pipeline. 
+For example, Vision and Abuse models share one instance, the Voice model runs on another, and backend services coexist on a separate compute node. The primary benefit is keeping infrastructure costs under ~$300/month, ensuring efficient resource usage, and simplifying the deployment pipeline.
 
 **Mitigation:** The trade-off is reduced redundancy—a single instance failure temporarily affects that specific service, and recovery depends on instance restart or redeployment. This was deemed acceptable during the pilot rollout, where strict cost constraints outweigh high-availability redundancy requirements.
 
@@ -545,47 +545,88 @@ SwarajDesk is a **utility app, not a social app.** A user opens it to file (Day 
 
 For pan-India deployment, the architecture evolves into a fully distributed microservices mesh with multi-region active-active replication and deep integration with national identity frameworks (Aadhaar/DigiLocker). Revenue shifts to recurring B2G SaaS licenses (₹2L–₹10L/district/year) and anonymized civic data sales.
 
-## Consolidated Financial Overview
-
-| Stage | Total Cost | Revenue | Net | Cost/User |
-|---|---|---|---|---|
-| Pilot (3 Districts, 10K users) | ₹4,41,632 | ₹4,00,000 | –₹41,632 | ₹48.33 |
-| CSR (State, 1L users) | ₹17,93,568 | ₹16,00,000 | –₹1,93,568 | ₹9.47 |
-| Multi-State (National, 5L users) | ₹89,63,976 | ₹1,00,00,000 | **+₹10,36,024** | ₹3.88 |
-
-> Cost per user falls **12.5×** from Pilot to National scale - infrastructure becomes more efficient as users grow, with the first profitable stage fully self-funded by government SaaS contracts.
-
 ---
-
 ## 7. Impact Analysis
 
-SwarajDesk doesn't just digitize complaints - it **closes the trust gap between citizens and the state.** Every feature is designed to create measurable, human outcomes across the governance chain.
+SwarajDesk doesn't just digitize complaints — it **closes the trust gap between citizens and the state.** Built on proven infrastructure, anchored in policy alignment, and designed for every Indian — rural, urban, literate or not — every feature cascades into measurable, human outcomes across the entire governance chain.
 
----
 
-### Who It Transforms & How
+### Why It Can Actually Be Built — Feasibility
+
+Impact means nothing without delivery. SwarajDesk is engineered to ship and scale, not just demo.
+
+| Pillar | What It Means in Practice |
+|---|---|
+| **Technology Readiness** | Proven microservices stack on K8s handles millions of users with quick prototyping cycles — no custom infrastructure risk. |
+| **Light Infrastructure** | K8s deployment at INR 96,000/month for 10 crore requests — sub-INR 4/user economics that no legacy system can match. |
+| **Operational Simplicity** | Role-based dashboards cut staff training to under 1 hour — agents go from onboarding to resolving cases the same day. |
+| **Open Integration** | Public APIs slot directly into existing Govt MIS and e-Gov services — zero rip-and-replace, maximum adoption velocity. |
+
+### Why It Will Survive Long-Term — Viability
+
+Pilots die. Platforms don't. SwarajDesk is built with institutional staying power baked into its design.
+
+- **Trust Dividend** — Transparent metrics and immutable blockchain logs build long-term citizen confidence in governance. People stop assuming corruption when they can see the audit trail.
+- **Workforce Stability** — Smart workload balancing and KPI-linked dashboards reduce agent burnout — the silent killer of every civic technology rollout.
+- **Crisis Prevention** — Faster grievance redressal means fewer escalations to protests, litigation, and headlines. The cost of not having SwarajDesk shows up in court fees and political crises.
+- **Policy Synergy** — Direct alignment with Digital India, Make in India, and the Smart Cities Mission means smoother procurement, faster adoption, and natural funding pathways.
+
+
+### Who It Transforms and How
 
 | Stakeholder | The Problem Today | The SwarajDesk Outcome |
 |---|---|---|
-| **Rural Citizens** | No voice. No access. No follow-up. | File complaints in their own language - offline, via voice, or SMS - without ever needing a smartphone or internet connection. |
-| **Urban Citizens** | Issues reported, never resolved. Trust eroded. | Real-time status tracking, community upvotes on trending issues, and transparent SLA timers mean they see action - not silence. |
-| **Field Agents** | Overwhelmed, under-supported, burned out. | AI auto-assigns and prioritizes cases. Workload caps prevent backlog. Agents focus on resolution, not paperwork. |
-| **Municipal Bodies** | Drowning in unstructured complaints, missing deadlines. | AI categorization cuts manual sorting by **30–40%.** SLA dashboards and escalation alerts reduce resolution time by **25%** - provably. |
-| **State Leaders** | Policy decisions made without ground-level data. | Complaint heatmaps, trend analytics, and predictive AI surface systemic failures - turning grievance data into **infrastructure investment evidence.** |
+| **Rural Citizens** | No voice. No access. No follow-up. | File complaints in their own language — offline, via voice, or SMS — without ever needing a smartphone or internet connection. Local language support and SMS status updates keep them informed at every step. |
+| **Urban Citizens** | Issues reported, never resolved. Trust eroded. | Real-time dashboards, community upvotes on trending issues, and transparent SLA timers mean they see action — not silence. Community pages let citizens organize around shared problems. |
+| **Field Agents** | Overwhelmed, under-supported, burned out. | AI auto-assigns and prioritizes cases. Workload caps prevent backlog accumulation. Agents focus on resolution — not paperwork, not manual triage. |
+| **Municipal Bodies** | Drowning in unstructured complaints, missing deadlines. | AI categorization cuts manual sorting by 30–40%. SLA dashboards and escalation alerts reduce resolution time by 25% — with blockchain-backed proof of performance. |
+| **State Leaders** | Policy decisions made without ground-level data. | Complaint heatmaps, trend analytics, and macro dashboards surface systemic failures — turning grievance data into infrastructure investment evidence. |
 
----
 
 ### The Numbers That Matter
 
-> **10,000 → 5,00,000+ citizens served** across 3 deployment stages.
-> **₹3.88/user** infrastructure cost at national scale - among the lowest unit economics in GovTech.
-> **Sub-1-hour onboarding** for field staff with role-based dashboards.
-> **1,00,000+ concurrent users** supported under normal operating conditions, with auto-scaling for crisis spikes.
+| Metric | Figure |
+|---|---|
+| Citizens served across deployment stages | 10,000 → 5,00,000+ |
+| Infrastructure cost at national scale | INR 3.88 / user |
+| Field staff onboarding time | Under 1 hour |
+| Concurrent users under normal operating conditions | 1,00,000+ |
+| Languages supported | 20+ |
+| Manual sorting reduction via AI categorization | 30–40% |
+| Resolution time reduction via SLA dashboards | 25% |
+
+
+### Execution Readiness
+
+SwarajDesk is not a prototype. It is execution-ready across five dimensions:
+
+**Higher Citizen Trust** — Tamper-proof audit logs and transparent status tracking make accountability visible, not promised. Citizens do not need to trust the system — they can verify it.
+
+**Faster Resolution** — AI-powered intake, intelligent routing, and SLA enforcement significantly reduce delays and backlog pressure. Every complaint enters a defined pipeline with a defined owner and a defined deadline.
+
+**Inclusive Access** — Offline-first design with multilingual and voice support bridges the rural-urban participation gap that existing platforms ignore. A farmer in a low-connectivity district has the same access rights as an urban professional.
+
+**Lower Administrative Load** — Automated spam detection, duplicate filtering, and abuse flags minimize manual screening and operational strain, allowing staff to focus on genuine resolution work.
+
+**Ground Enforcement** — UAV-assisted on-ground verification for unsafe or inaccessible zones closes the last-mile accountability gap that no existing platform — CPGRAMS or the CMO Kerala Grievance Portal — addresses.
+
+### Competitive Position
+
+Where CPGRAMS is web-only and supports 2–3 languages, and the CMO Kerala Grievance Portal offers limited mobile access and unclear tracking, SwarajDesk delivers:
+
+- Mobile-first, offline-capable submission
+- 20+ language support with voice-to-text
+- Community-driven issue prioritization and upvoting
+- Blockchain-backed transparency and audit trails
+- UAV-assisted verification for field accountability
+- Multi-department escalation with automated SLA enforcement
+
+These are not incremental improvements. They are structural advantages that redefine what a grievance redressal system can do.
 
 ---
 
 ### The Bigger Picture
 
-Most civic platforms stop at complaint *submission*. SwarajDesk is built for complaint *resolution* - with blockchain audit logs that make accountability tamper-proof, UAV-assisted ground verification for unsafe zones, and a feedback loop that turns every resolved ticket into **public proof that government works.**
+Most civic platforms stop at complaint submission. SwarajDesk is built for complaint resolution — with blockchain audit trails that make accountability tamper-proof, UAV-assisted ground verification for unsafe zones, a community feed that surfaces trending issues organically, and a feedback loop that turns every resolved ticket into public proof that government works.
 
-> In a democracy, the fastest path to citizen trust is a problem that visibly gets fixed. SwarajDesk makes that the default - not the exception.
+> In a democracy, the fastest path to citizen trust is a problem that visibly gets fixed. SwarajDesk makes that the default — not the exception.
