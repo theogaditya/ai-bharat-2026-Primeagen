@@ -231,7 +231,17 @@ Since every complaint must pass through several processing stages such as abuse 
 
 <br/>
 
-**Trade-off 2 - Blockchain Transparency vs. Consensus Latency**
+**Trade-off 2 - Cost Efficiency vs. Infrastructure Redundancy**
+
+> **Decision:** Instead of deploying load-balanced multi-instance clusters, the system initially runs a small number of EC2 instances hosting multiple services.
+
+For example, Vision and Abuse models share one instance, the Voice model runs on another, and backend services coexist on a separate compute node. The primary benefit is keeping infrastructure costs under ~$300/month, ensuring efficient resource usage, and simplifying the deployment pipeline. 
+
+**Mitigation:** The trade-off is reduced redundancy—a single instance failure temporarily affects that specific service, and recovery depends on instance restart or redeployment. This was deemed acceptable during the pilot rollout, where strict cost constraints outweigh high-availability redundancy requirements.
+
+<br/>
+
+**Trade-off 3 - Blockchain Transparency vs. Consensus Latency**
 
 > **Decision:** Complaint state changes are written to a blockchain ledger to ensure transparency and tamper-resistant auditing.
 
