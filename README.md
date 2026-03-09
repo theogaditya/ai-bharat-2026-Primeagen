@@ -377,15 +377,17 @@ To ensure absolute reliability, especially in rural areas with poor connectivity
 - **Failure State:** A user in a remote district loses internet connectivity midway through filing a grievance.
 - **Fallback:** The Next.js application utilizes local caching (DynamoDB/AsyncStorage). The complaint is securely saved on the device, and the UI displays an "Offline - Queued for Sync" indicator. A background worker continuously monitors the device's network state. The moment a stable 3G/4G/WiFi connection is restored, the app automatically flushes the payload to the backend without requiring the user to reopen the application.
 
-### 5.2 · AI Voice Assistant Degradation
+### 5.3 · AI Processing Retry Queue (Self-Healing Pipeline)
 
-- **Failure State:** High latency on the AI EC2 instance, GPU/CPU exhaustion, or an unsupported regional dialect causes the Voice API to time out.
-- **Fallback:** If the speech-to-text engine takes longer than **4.5 seconds** to respond, the app instantly terminates the WebSocket connection. The interface gracefully drops down to a standard text-based chat. The user is never blocked from filing their grievance; the input method simply shifts from voice to keyboard.
+- **Failure State:** During complaint ingestion, AI services such as image validation, categorization, or abuse detection fail to respond within the allowed timeout window.
+  
+  This can occur due to:
+  - Temporary AI instance overload
+  - Model service restarts
+  - Network delays between services
+  - Large surge traffic during civic events or disasters
 
-### 5.3 · AI Vision Model Bypass
-
-- **Failure State:** The computer vision model times out due to a massive queue of incoming images during a highly localized crisis (e.g., severe flooding).
-- **Fallback (Soft Accept):** If the Vision API fails to return a validation score within **5 seconds**, the Bun backend intercepts the timeout. Instead of rejecting the user's image, it accepts the complaint but injects a metadata flag: `AI_VISION_BYPASSED: TRUE`. The complaint is pushed to the database with a status of `Pending Manual Triage`, ensuring the citizen's workflow remains uninterrupted.
+- **Fallback (Queue Reprocessing):** Instead of rejecting the complaint or bypassing validation, SwarajDesk employs a self-healing retry mechanism within the Redis queue pipeline.
 
 ### 5.4 · Database & Queue Failover
 
@@ -469,7 +471,7 @@ SwarajDesk operates on a **B2G2C (Business-to-Government-to-Citizen)** model acr
 
 SwarajDesk is a **utility app, not a social app.** A user opens it to file (Day 1), check status (Day 3–7), and close the ticket (Day 10) - then goes dormant for months. At 10,000 registered users, real server load is **~1,500–3,000 MAU**. The GKE auto-scaling handles crisis spikes (e.g., flood/cyclone) where MAU can surge to ~80% of cumulative overnight.
 
-### Marketing Strategy - ₹2.5 Lakhs
+### Marketing Strategy
 
 | Track | Name | Tactic | Channel |
 |---|---|---|---|
@@ -481,11 +483,10 @@ SwarajDesk is a **utility app, not a social app.** A user opens it to file (Day 
 | | INR |
 |---|---|
 | Infrastructure | ₹2,41,632 |
-| Marketing | ₹2,50,000 |
 | Operations | ₹2,00,000 |
-| **Total Cost** | **₹6,91,632** |
+| **Total Cost** | **₹4,41,632** |
 | Innovation Grants + Hackathon Prize | ₹4,00,000 |
-| **Net Position** | **–₹2,91,632** *(grant-funded; expected at validation stage)* |
+| **Net Position** | **–₹41,632** *(grant-funded; expected at validation stage)* |
 
 ---
 
@@ -520,7 +521,7 @@ SwarajDesk is a **utility app, not a social app.** A user opens it to file (Day 
 | M10–M12 | Viral Growth | 75,000 | Swaraj Champions League goes state-wide |
 | M13–M18 | **Target Met** | **1,00,000** | Retention and resolution speed focus |
 
-### Marketing Strategy - ₹8.5 Lakhs
+### Marketing Strategy
 
 | Track | Name | Tactic | Channel |
 |---|---|---|---|
@@ -532,9 +533,8 @@ SwarajDesk is a **utility app, not a social app.** A user opens it to file (Day 
 | | INR |
 |---|---|
 | Infrastructure | ₹4,73,568 |
-| Marketing | ₹8,50,000 |
 | Operations | ₹13,20,000 |
-| **Total Cost** | **₹26,43,568** |
+| **Total Cost** | **₹17,93,568** |
 
 Sponsorships sold as **"Digital Village Impact Packages"** to Tata Steel, MCL, Adani Foundation:
 
@@ -544,7 +544,7 @@ Sponsorships sold as **"Digital Village Impact Packages"** to Tata Steel, MCL, A
 | Gold | ₹7,00,000 | "Adopt 3 Districts" + CSC branding + quarterly PR event |
 | Platinum | ₹12,00,000 | Exclusive state-wide branding + full CSR integration |
 
-*Target: 1 Gold + 3 Silver = **₹16,00,000 revenue** · Net: –₹10,43,568 (standard for scaling stage)*
+*Target: 1 Gold + 3 Silver = **₹16,00,000 revenue** · Net: –₹1,93,568 (standard for scaling stage)*
 
 ---
 
@@ -556,8 +556,8 @@ For pan-India deployment, the architecture evolves into a fully distributed micr
 
 | Stage | Total Cost | Revenue | Net | Cost/User |
 |---|---|---|---|---|
-| Pilot (3 Districts, 10K users) | ₹6,91,632 | ₹4,00,000 | –₹2,91,632 | ₹48.33 |
-| CSR (State, 1L users) | ₹26,43,568 | ₹16,00,000 | –₹10,43,568 | ₹9.47 |
+| Pilot (3 Districts, 10K users) | ₹4,41,632 | ₹4,00,000 | –₹41,632 | ₹48.33 |
+| CSR (State, 1L users) | ₹17,93,568 | ₹16,00,000 | –₹1,93,568 | ₹9.47 |
 | Multi-State (National, 5L users) | ₹89,63,976 | ₹1,00,00,000 | **+₹10,36,024** | ₹3.88 |
 
 > Cost per user falls **12.5×** from Pilot to National scale - infrastructure becomes more efficient as users grow, with the first profitable stage fully self-funded by government SaaS contracts.
