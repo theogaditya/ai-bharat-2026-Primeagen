@@ -247,7 +247,7 @@ For example, Vision and Abuse models share one instance, the Voice model runs on
 
 Blockchain consensus mechanisms introduce significant latency. Waiting for blockchain confirmation inside the API request would drastically slow down administrative operations such as assigning or closing complaints.
 
-**Mitigation:** The system separates blockchain writes from the main API workflow using an asynchronous approach. PostgreSQL is updated immediately and the API returns a `200 OK` response. A background worker then processes the event asynchronously, generating the cryptographic hash and writing the transaction to the blockchain ledger without delaying the user-facing operation.
+**Mitigation:** The system separates blockchain writes from the main API workflow using an asynchronous approach. PostgreSQL is updated immediately and the API returns a `200 OK` response. A background worker then processes the event asynchronously, anchoring the cryptographic hash to a lightweight private chain (or Ethereum L2) to guarantee immutability without delaying the user-facing operation or incurring high public mainnet gas fees.
 
 <br/>
 
@@ -338,7 +338,8 @@ Historically, municipal offices employ teams of workers purely to read incoming 
 
 - **Natural Language Processing (NLP):** NLP models analyze the raw text of complaint descriptions (or the text converted from the user's voice prompt).
 - **Intelligent Entity Extraction:** The AI identifies key entities such as the core issue, severity level, and specific keywords to determine the context.
-- **Automated Departmental Routing:** Based on the semantic context, the AI automatically categorizes the issue into relevant departments (e.g., mapping the phrase `"sparking wire on a pole"` strictly to the *Electrical Department*). This ensures instantaneous, error-free assignment to the correct municipal engineers.
+- **Automated Departmental Routing:** Based on the semantic context, the AI automatically categorizes the issue into relevant departments (e.g., mapping the phrase `"sparking wire on a pole"` strictly to the *Electrical Department*). This ensures instantaneous assignment to the correct municipal engineers.
+- **Human-in-the-Loop Fallback:** The AI acts as an assistant, not a dictator. If the categorization model returns a confidence score below 85% for an ambiguous complaint, the system safely routes the issue to a human 'Triage' queue rather than guessing incorrectly.
 
 ### 3.4 · Abuse Detection Model
 
@@ -382,7 +383,7 @@ To ensure absolute reliability, especially in rural areas with poor connectivity
 ### 4.1 · Network Offline Mode
 
 - **Failure State:** A user in a remote district loses internet connectivity midway through filing a grievance.
-- **Fallback:** The Next.js application utilizes local caching (DynamoDB/AsyncStorage). The complaint is securely saved on the device, and the UI displays an "Offline - Queued for Sync" indicator. A background worker continuously monitors the device's network state. The moment a stable 3G/4G/WiFi connection is restored, the app automatically flushes the payload to the backend without requiring the user to reopen the application.
+- **Fallback:** The Next.js application utilizes local caching via IndexedDB and service workers. The complaint text and compressed image payloads are securely saved locally on the device, ensuring the data survives even if the browser or application is forcefully closed. The UI displays an "Offline - Queued for Sync" indicator. A background worker continuously monitors the device's network state. The moment a stable 3G/4G/WiFi connection is restored, the app automatically flushes the payload to the backend.
 
 ### 4.2 · AI Processing Retry Queue (Self-Healing Pipeline)
 
@@ -543,7 +544,7 @@ SwarajDesk is a **utility app, not a social app.** A user opens it to file (Day 
 
 ## Phase 3 - National Scale
 
-For pan-India deployment, the architecture evolves into a fully distributed microservices mesh with multi-region active-active replication and deep integration with national identity frameworks (Aadhaar/DigiLocker). Revenue shifts to recurring B2G SaaS licenses (₹2L–₹10L/district/year) and anonymized civic data sales.
+For pan-India deployment, the architecture evolves into a fully distributed microservices mesh with multi-region active-active replication and deep integration with national identity frameworks (Aadhaar/DigiLocker). Revenue shifts to recurring B2G SaaS licenses and anonymized civic data sales, with operations scaled by dedicated DevOps management.
 
 ---
 ## 7. Impact Analysis
@@ -556,8 +557,8 @@ Impact means nothing without delivery. SwarajDesk is engineered to ship and scal
 
 | Pillar | What It Means in Practice |
 |---|---|
-| **Technology Readiness** | Proven microservices stack on K8s handles millions of users with quick prototyping cycles — no custom infrastructure risk. |
-| **Light Infrastructure** | Currently deployed on VPS/EC2 instances for rapid prototyping. The production architecture is fully designed for K8s orchestration — projecting INR 96,000/month for 10 crore requests at scale, a sub-INR 4/user cost structure no legacy system can match. |
+| **Technology Readiness** | The system avoids "buzzword architecture" during the pilot in favor of highly-optimized EC2 instances, while maintaining full Terraform/Helm manifests ready for production K8s state-scaling. |
+| **Light Infrastructure** | Currently deployed via efficient reverse-proxy configurations for rapid prototyping, achieving a sub-$310/month pilot cost structure that legacy systems cannot match. |
 | **Operational Simplicity** | Role-based dashboards cut staff training to under 1 hour — agents go from onboarding to resolving cases the same day. |
 | **Open Integration** | Public APIs slot directly into existing Govt MIS and e-Gov services — zero rip-and-replace, maximum adoption velocity. |
 
@@ -585,7 +586,7 @@ Pilots die. Platforms don't. SwarajDesk is built with institutional staying powe
 | Metric | Figure |
 |---|---|
 | Citizens served across deployment stages | 10,000 → 5,00,000+ |
-| Infrastructure cost at national scale | INR 3.88 / user |
+| Infrastructure target cost at scale | Sub-₹5.00 / user |
 | Field staff onboarding time | Under 1 hour |
 | Concurrent users under normal operating conditions | 1,00,000+ |
 | Languages supported | 20+ |
