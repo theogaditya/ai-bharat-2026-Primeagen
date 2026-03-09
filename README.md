@@ -307,8 +307,6 @@ The platform integrates several AI models alongside the main backend services. T
 
 The SwarajDesk platform is fundamentally driven by a suite of isolated, highly specialized Artificial Intelligence models. By decoupling these models into independent Python FastAPI microservices, the system can dynamically scale its GPU/CPU resources without impacting the core Node/Bun web servers. The AI engine is designed to eliminate manual triage, bridge the digital divide, and shift civic administration from a reactive to a proactive state.
 
-<br/>
-
 ### 3.1 · Voice and Chat Assistant
 
 To ensure absolute inclusivity for citizens with varying levels of digital literacy or visual impairment, the primary interface features an advanced Voice and Chat Assistant.
