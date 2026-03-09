@@ -550,8 +550,6 @@ For pan-India deployment, the architecture evolves into a fully distributed micr
 
 SwarajDesk doesn't just digitize complaints — it **closes the trust gap between citizens and the state.** Built on proven infrastructure, anchored in policy alignment, and designed for every Indian — rural, urban, literate or not — every feature cascades into measurable, human outcomes across the entire governance chain.
 
----
-
 ### Why It Can Actually Be Built — Feasibility
 
 Impact means nothing without delivery. SwarajDesk is engineered to ship and scale, not just demo.
@@ -563,8 +561,6 @@ Impact means nothing without delivery. SwarajDesk is engineered to ship and scal
 | **Operational Simplicity** | Role-based dashboards cut staff training to under 1 hour — agents go from onboarding to resolving cases the same day. |
 | **Open Integration** | Public APIs slot directly into existing Govt MIS and e-Gov services — zero rip-and-replace, maximum adoption velocity. |
 
----
-
 ### Why It Will Survive Long-Term — Viability
 
 Pilots die. Platforms don't. SwarajDesk is built with institutional staying power baked into its design.
@@ -573,8 +569,6 @@ Pilots die. Platforms don't. SwarajDesk is built with institutional staying powe
 - **Workforce Stability** — Smart workload balancing and KPI-linked dashboards reduce agent burnout — the silent killer of every civic technology rollout.
 - **Crisis Prevention** — Faster grievance redressal means fewer escalations to protests, litigation, and headlines. The cost of not having SwarajDesk shows up in court fees and political crises.
 - **Policy Synergy** — Direct alignment with Digital India, Make in India, and the Smart Cities Mission means smoother procurement, faster adoption, and natural funding pathways.
-
----
 
 ### Who It Transforms and How
 
@@ -585,8 +579,6 @@ Pilots die. Platforms don't. SwarajDesk is built with institutional staying powe
 | **Field Agents** | Overwhelmed, under-supported, burned out. | AI auto-assigns and prioritizes cases. Workload caps prevent backlog accumulation. Agents focus on resolution — not paperwork, not manual triage. |
 | **Municipal Bodies** | Drowning in unstructured complaints, missing deadlines. | AI categorization cuts manual sorting by 30–40%. SLA dashboards and escalation alerts reduce resolution time by 25% — with blockchain-backed proof of performance. |
 | **State Leaders** | Policy decisions made without ground-level data. | Complaint heatmaps, trend analytics, and macro dashboards surface systemic failures — turning grievance data into infrastructure investment evidence. |
-
----
 
 ### The Numbers That Matter
 
@@ -599,8 +591,6 @@ Pilots die. Platforms don't. SwarajDesk is built with institutional staying powe
 | Languages supported | 20+ |
 | Manual sorting reduction via AI categorization | 30–40% |
 | Resolution time reduction via SLA dashboards | 25% |
-
----
 
 ### Execution Readiness
 
@@ -615,8 +605,6 @@ SwarajDesk is not a prototype. It is execution-ready across five dimensions:
 **Lower Administrative Load** — Automated spam detection, duplicate filtering, and abuse flags minimize manual screening and operational strain, allowing staff to focus on genuine resolution work.
 
 **Ground Enforcement** — UAV-assisted on-ground verification for unsafe or inaccessible zones closes the last-mile accountability gap that no existing platform — CPGRAMS or the CMO Kerala Grievance Portal — addresses.
-
----
 
 ### Competitive Position
 
